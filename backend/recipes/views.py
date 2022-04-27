@@ -12,7 +12,8 @@ from foodgram.pagination import LimitPageNumberPagination
 from foodgram.permissions import IsAuthorOrAdminOrReadOnly
 from .filters import IngredientsSearchFilter, RecipesFilter
 from .models import Favorite, Ingredients, Recipes, Tag
-from .serializers import *
+from .serializers.general import *
+from .serializers.special import RecipesShortReadSerializer
 
 
 ERRORS_KEY = 'errors'

@@ -1,7 +1,7 @@
 from django.contrib.auth.hashers import make_password
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 
-from recipes.serializers import RecipesShortReadSerializer
+from recipes.serializers.special import RecipesShortReadSerializer
 from .models import User
 
 
@@ -10,7 +10,10 @@ class UserSerializer(ModelSerializer):
 
     class Meta:
         model = User
-        fields = '__all__'
+        fields = (
+            'id', 'email', 'login', 'first_name', 'last_name', 'password',
+            'is_subscribed',
+        )
         extra_kwargs = {
             'password': {'write_only': True, 'required': True},
         }

@@ -143,8 +143,7 @@ class RecipesWriteSerializer(ModelSerializer):
             validated_data.pop('ingredients'), validated_data.pop('tags')
         )
         for ingredient in ingredients:
-            count_of_ingredients, _ = CountOfIngredients.objects.get_or_create
-            (
+            count_of_ingredients, _ = CountOfIngredients.objects.get_or_create(
                 ingredient=get_object_or_404(Ingredient, pk=ingredient['id']),
                 amount=ingredient['amount'],
             )
@@ -165,9 +164,3 @@ class RecipesWriteSerializer(ModelSerializer):
         instance.tags.clear()
         instance = self.add_ingredients_and_tags(instance, validated_data)
         return super().update(instance, validated_data)
-
-
-class RecipesShortReadSerializer(ModelSerializer):
-    class Meta:
-        model = Recipes
-        fields = '__all__'
