@@ -1,7 +1,7 @@
 from users.models import *
 from django_filters.rest_framework import *
 
-from users.models import Shopping_list
+from users.models import Shoppinglist
 from .models import Ingredients, Recipes
 
 ERROR_NAME= "Имя не найдено!"
@@ -56,7 +56,7 @@ class RecipesFilter(FilterSet):
             recipes = (
                 self.request.user.shopping_list.recipes.all()
             )
-        except Shopping_list.DoesNotExist:
+        except Shoppinglist.DoesNotExist:
             return queryset
         return queryset.filter(
             pk__in=(recipes.pk for recipe in recipes)

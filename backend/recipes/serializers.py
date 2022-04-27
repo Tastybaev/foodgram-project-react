@@ -3,7 +3,7 @@ from drf_extra_fields.fields import Base64ImageField
 from rest_framework.serializers import *
 
 from recipes.models import *
-from users.models import Shopping_list
+from users.models import Shoppinglist
 from users.serializers import UserSerializer
 
 TAGS_UNIQUE_ERROR = 'Теги не могут повторяться!'
@@ -52,7 +52,7 @@ class RecipesIngredientWriteSerializer(ModelSerializer):
 
 
 class RecipesIngredientReadSerializer(ModelSerializer):
-    id = IntegerField(source='ingredient.id') # noqa
+    id = IntegerField(source='ingredient.id')
     name = CharField(source='ingredient.name')
     measurement_unit = CharField(source='ingredient.measurement_unit')
 
@@ -87,9 +87,9 @@ class RecipesReadSerializer(ModelSerializer):
         try:
             return (
                 user.is_authenticated and
-                user.Shopping_list.Recipes.filter(pk__in=(obj.pk,)).exists()
+                user.Shoppinglist.Recipes.filter(pk__in=(obj.pk,)).exists()
             )
-        except Shopping_list.DoesNotExist:
+        except Shoppinglist.DoesNotExist:
             return False
 
 
@@ -143,7 +143,8 @@ class RecipesWriteSerializer(ModelSerializer):
             validated_data.pop('ingredients'), validated_data.pop('tags')
         )
         for ingredient in ingredients:
-            count_of_ingredients, _ = CountOfIngredients.objects.get_or_create(
+            count_of_ingredients, _ = CountOfIngredients.objects.get_or_create
+            (
                 ingredient=get_object_or_404(Ingredient, pk=ingredient['id']),
                 amount=ingredient['amount'],
             )

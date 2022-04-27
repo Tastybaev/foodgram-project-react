@@ -1,6 +1,6 @@
 from django.contrib.admin import ModelAdmin, display, register
 
-from .models import Ingredients, Recipes, Tag
+from .models import *
 
 
 EMPTY = '< Тут Пусто >'
@@ -13,7 +13,7 @@ class TagAdmin(ModelAdmin):
     empty_value_display = EMPTY
 
 
-@register(Ingredient)
+@register(Ingredients)
 class IngredientsAdmin(ModelAdmin):
     list_display = ('name', 'weight',)
     list_filter = ('name',)
@@ -22,7 +22,7 @@ class IngredientsAdmin(ModelAdmin):
     empty_value_display = EMPTY
 
 
-@register(Recipe)
+@register(Recipes)
 class RecipesAdmin(ModelAdmin):
     list_display = ('name', 'author',)
     list_filter = ('name', 'author', 'tags',)
@@ -34,7 +34,7 @@ class RecipesAdmin(ModelAdmin):
         return obj.favorites.count()
 
 
-@register(CountOfIngredient)
+@register(CountOfIngredients)
 class CountOfIngredientsAdmin(ModelAdmin):
     list_display = (
         'id', 'ingredient', 'amount', 'get_measurement_unit',

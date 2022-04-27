@@ -17,8 +17,8 @@ INGREDIENT_MIN_AMOUNT_ERROR = (
     'Количество ингредиентов не может быть меньше {min_value}!'
 )
 
-class Tag(Models):
-    name = Charfield(max_length=50)
+class Tag(Model):
+    name = CharField(max_length=50)
     color = CharField('Хекскод цвета', max_length=7)
     slug = SlugField('Слаг', max_length=200)
 
@@ -26,7 +26,7 @@ class Tag(Models):
         return f'{self.name}'
 
 
-class Ingredients(Models):
+class Ingredients(Model):
     name = CharField('Название ингредиента',
        max_length=50
     ),
@@ -69,11 +69,11 @@ class CountOfIngredients(Model):
         )
 
 
-class Recipes(Models):
+class Recipes(Model):
     author = ForeignKey(
         User,
         on_delete=SET_NULL,
-        null=TRUE,
+        null=True,
         related_name='recipes',
         verbose_name='Автор'
     )
@@ -84,7 +84,6 @@ class Recipes(Models):
     text = TextField('Описание')
     tags = ManyToManyField(
         Tag,
-        on_delete=CASCADE,
         related_name='recipes',
         verbose_name='Теги',
     )
