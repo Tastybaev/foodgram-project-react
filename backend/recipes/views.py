@@ -78,7 +78,7 @@ class RecipesViewSet(ModelViewSet):
             serializer.data, status=HTTP_200_OK
         )
 
-    def add_to_favorite(self, request, recipe):
+    def add_to_favorite(self, request, recipes):
         try:
             Favorite.objects.create(user=request.user, recipe=recipe)
         except IntegrityError:
@@ -86,13 +86,13 @@ class RecipesViewSet(ModelViewSet):
                 {ERRORS_KEY: 'Вы уже подписаны!'},
                 status=HTTP_400_BAD_REQUEST,
             )
-        serializer = RecipesShortReadSerializer(recipe)
+        serializer = RecipesShortReadSerializer(recipes)
         return Response(
             serializer.data,
             status=HTTP_201_CREATED,
         )
 
-    def delete_from_favorite(self, request, recipe):
+    def delete_from_favorite(self, request, recipes):
         favorite = Favorite.objects.filter(user=request.user, recipes=recipes)
         if not favorite.exists():
             return Response(

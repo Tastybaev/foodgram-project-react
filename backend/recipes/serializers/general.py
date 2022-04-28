@@ -27,7 +27,7 @@ class TagSerializer(ModelSerializer):
 class IngredientsSerializer(ModelSerializer):
     class Meta:
         model = Ingredients
-        fields = ('id', 'name', 'measurement_unit',)
+        fields = ('id', 'name', 'weight',)
 
 
 class RecipesIngredientWriteSerializer(ModelSerializer):
@@ -52,13 +52,13 @@ class RecipesIngredientWriteSerializer(ModelSerializer):
 
 
 class RecipesIngredientReadSerializer(ModelSerializer):
-    id = IntegerField(source='ingredient.id')
-    name = CharField(source='ingredient.name')
-    measurement_unit = CharField(source='ingredient.measurement_unit')
+    id = IntegerField()
+    name = CharField()
+    weight = CharField()
 
     class Meta:
         model = CountOfIngredients
-        fields = ('id', 'name', 'measurement_unit', 'amount',)
+        fields = ('id', 'name', 'weight', 'amount',)
 
 
 class RecipesReadSerializer(ModelSerializer):
@@ -79,7 +79,7 @@ class RecipesReadSerializer(ModelSerializer):
         user = self.get_user()
         return (
             user.is_authenticated
-            and user.favorites.filter(recipe=obj).exists()
+            and user.favorites.filter(recipes=obj).exists()
         )
 
     def get_is_in_shopping_list(self, obj):

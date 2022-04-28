@@ -37,19 +37,19 @@ class RecipesAdmin(ModelAdmin):
 @register(CountOfIngredients)
 class CountOfIngredientsAdmin(ModelAdmin):
     list_display = (
-        'id', 'ingredient', 'amount', 'get_measurement_unit',
+        'id', 'ingredients', 'amount', 'get_weight',
         'get_recipes_count',
     )
-    readonly_fields = ('get_measurement_unit',)
-    list_filter = ('ingredient',)
-    ordering = ('ingredient',)
+    readonly_fields = ('get_weight',)
+    list_filter = ('ingredients',)
+    ordering = ('ingredients',)
     empty_value_display = EMPTY
 
     @display(description='Единица измерения')
-    def get_measurement_unit(self, obj):
+    def get_weight(self, obj):
         try:
-            return obj.ingredient.measurement_unit
-        except CountOfIngredients.ingredient.RelatedObjectDoesNotExist:
+            return obj.ingredients.weight
+        except CountOfIngredients.ingredients.RelatedObjectDoesNotExist:
             return EMPTY
 
     @display(description='Количество ссылок в рецептах')
@@ -59,6 +59,6 @@ class CountOfIngredientsAdmin(ModelAdmin):
 
 @register(Favorite)
 class FavoriteAdmin(ModelAdmin):
-    list_display = ('user', 'recipe',)
-    list_filter = ('user', 'recipe',)
+    list_display = ('user', 'recipes',)
+    list_filter = ('user', 'recipes',)
     empty_value_display = EMPTY

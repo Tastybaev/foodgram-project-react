@@ -24,6 +24,9 @@ class Tag(Model):
 
     def __str__(self):
         return f'{self.name}'
+    
+    def get_absolute_url(self):
+        return reverse('tag', args=[self.slug])
 
 
 class Ingredients(Model):
@@ -33,10 +36,16 @@ class Ingredients(Model):
     weight = CharField('Единица измерения',
         max_length=50
     )
+    class Meta:
+        verbose_name = 'ingredients'
+        verbose_name_plural = 'ingredients'
+        ordering = ('name',)
 
+    def __str__(self):
+        return f'{self.name}'
 
 class CountOfIngredients(Model):
-    ingredient = ForeignKey(
+    ingredients = ForeignKey(
         Ingredients,
         on_delete=CASCADE,
         related_name='count_in_recipes',
@@ -57,15 +66,15 @@ class CountOfIngredients(Model):
         verbose_name_plural = 'Количество ингредиентов'
         constraints = (
             UniqueConstraint(
-                fields=('ingredient', 'amount',),
+                fields=('ingredients', 'amount',),
                 name='unique_ingredient_amount',
             ),
         )
 
     def __str__(self):
         return (
-            f'{self.ingredient.name} - {self.amount}'
-            f' ({self.ingredient.measurement_unit})'
+            f'{self.ingredients.name} - {self.amount}'
+            f' ({self.ingredients.weight})'
         )
 
 
@@ -104,7 +113,7 @@ class Recipes(Model):
         return f'{self.name} ({self.author})'
 
     def get_absoulute_url(self):
-        return reverse('recipe', args=[self.pk])
+        return reverse('recipes', args=[self.pk])
 
 
 class Favorite(Model):
@@ -114,7 +123,7 @@ class Favorite(Model):
         related_name='favorites',
         verbose_name='Пользователь',
     )
-    recipe = ForeignKey(
+    recipes = ForeignKey(
         Recipes,
         on_delete=CASCADE,
         related_name='favorites',
@@ -126,10 +135,10 @@ class Favorite(Model):
         verbose_name_plural = 'Избранное'
         constraints = (
             UniqueConstraint(
-                fields=('user', 'recipe',),
-                name='unique_user_recipe',
+                fields=('user', 'recipes',),
+                name='unique_user_recipes',
             ),
         )
 
     def __str__(self):
-        return f'{self.user} -> {self.recipe}'
+        return f'{self.user} -> {self.recipes}'
