@@ -32,14 +32,14 @@ class Tag(Model):
 class Ingredients(Model):
     name = CharField('Название ингредиента',
        max_length=50
-    ),
+    )
     weight = CharField('Единица измерения',
         max_length=50
     )
     class Meta:
         verbose_name = 'ingredients'
         verbose_name_plural = 'ingredients'
-        ordering = ('name',)
+        ordering = ['name',]
 
     def __str__(self):
         return f'{self.name}'
@@ -96,7 +96,7 @@ class Recipes(Model):
         related_name='recipes',
         verbose_name='Теги',
     )
-    ingredient = ManyToManyField(
+    ingredients = ManyToManyField(
         CountOfIngredients,
         related_name='count_in_recipes',
         verbose_name='Ингредиент',

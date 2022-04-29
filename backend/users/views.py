@@ -110,7 +110,7 @@ class ShoppingListViewSet(GenericViewSet):
 
     def generate_shopping_list_data(self, request):
         recipes = (
-            request.user.Shoppinglist.recipes.prefetch_related('ingredient')
+            request.user.Shoppinglist.recipes.prefetch_related('ingredients')
         )
         return (
             recipes.order_by(self.NAME)
@@ -145,13 +145,13 @@ class ShoppingListViewSet(GenericViewSet):
         return response
 
     def add_to_shopping_list(self, request, Recipes, Shoppinglist):
-        if Shoppinglist.recipes.filter(pk__in=(recipe.pk,)).exists():
+        if Shoppinglist.recipes.filter(pk__in=(recipes.pk,)).exists():
             return Response(
                 {ERRORS_KEY: 'Нельзя подписаться дважды!'},
                 status=HTTP_400_BAD_REQUEST,
             )
-        Shoppinglist.recipes.add(recipe)
-        serializer = self.get_serializer(recipe)
+        Shoppinglist.recipes.add(recipes)
+        serializer = self.get_serializer(recipes)
         return Response(
             serializer.data,
             status=HTTP_201_CREATED,
@@ -170,10 +170,10 @@ class ShoppingListViewSet(GenericViewSet):
 
     @action(methods=('get', 'delete',), detail=True)
     def shopping_list(self, request, pk=None):
-        recipe = get_object_or_404(Recipe, pk=pk)
+        recipes = get_object_or_404(Recipes, pk=pk)
         shopping_list = (
             Shoppinglist.objects.get_or_create(user=request.user)[0]
         )
         if request.method == 'GET':
-            return self.add_to_shopping_list(request, recipe, shopping_list)
-        return self.remove_from_shopping_list(request, recipe, shopping_list)
+            return self.add_to_shopping_list(request, recipes, shopping_list)
+        return self.remove_from_shopping_list(request, recipes, shopping_list)

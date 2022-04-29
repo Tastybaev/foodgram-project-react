@@ -80,7 +80,7 @@ class RecipesViewSet(ModelViewSet):
 
     def add_to_favorite(self, request, recipes):
         try:
-            Favorite.objects.create(user=request.user, recipe=recipe)
+            Favorite.objects.create(user=request.user, recipes=recipes)
         except IntegrityError:
             return Response(
                 {ERRORS_KEY: 'Вы уже подписаны!'},
@@ -108,7 +108,7 @@ class RecipesViewSet(ModelViewSet):
         permission_classes=(IsAuthenticated,)
     )
     def favorite(self, request, pk=None):
-        recipes = get_object_or_404(Recipe, pk=pk)
+        recipes = get_object_or_404(Recipes, pk=pk)
         if request.method == 'GET':
             return self.add_to_favorite(request, recipes)
         return self.delete_from_favorite(request, recipes)

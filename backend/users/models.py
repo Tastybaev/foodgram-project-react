@@ -15,7 +15,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = [
-        'login', 'password',  'email', 'first_name', 'last_name',
+        'login', 'password', 'first_name', 'last_name',
     ]
 
     objects = UserManager()
@@ -65,12 +65,12 @@ class Shoppinglist(Model):
     user = OneToOneField(
         User,
         on_delete=CASCADE,
-        related_name='subscriber',
-        verbose_name='Подписчик'
+        related_name='Shoppinglist',
+        verbose_name='Подписчик на корзину'
     )
     recipes = ManyToManyField(
         'recipes.Recipes',
-        related_name='in_shopping_list',
+        related_name='Shoppinglist',
         verbose_name='Рецепты',
     )
 
