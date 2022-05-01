@@ -7,7 +7,8 @@ load_dotenv()
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-SECRET_KEY = os.environ['SECRET_KEY']
+SECRET_KEY = 'akt^tbztx+#1c44ad1zs#4!jd%2kx%fvi7=q&=$8^&ele*oznc'
+# os.environ['SECRET_KEY']
 
 DEBUG = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 
