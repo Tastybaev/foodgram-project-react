@@ -3,14 +3,12 @@ from django.contrib.admin import ModelAdmin, display, register
 from .models import *
 
 
-EMPTY = '< Тут Пусто >'
-
 @register(Tag)
 class TagAdmin(ModelAdmin):
     list_display = ('id', 'name', 'slug', 'color',)
     search_fields = ('name', 'slug',)
     ordering = ('color',)
-    empty_value_display = EMPTY
+    empty_value_display = '< Тут Пусто >'
 
 
 @register(Ingredients)
@@ -19,7 +17,7 @@ class IngredientsAdmin(ModelAdmin):
     list_filter = ('name',)
     search_fields = ('name',)
     ordering = ('weight',)
-    empty_value_display = EMPTY
+    empty_value_display = '< Тут Пусто >'
 
 
 @register(Recipes)
@@ -27,9 +25,9 @@ class RecipesAdmin(ModelAdmin):
     list_display = ('name', 'author',)
     list_filter = ('name', 'author', 'tags',)
     readonly_fields = ('added_in_favorites',)
-    empty_value_display = EMPTY
+    empty_value_display = '< Тут Пусто >'
 
-    @display(description='Общее число добавлений в избранное')
+    @display(description='Общее колличество добавлений в избранное')
     def added_in_favorites(self, obj):
         return obj.favorites.count()
 
@@ -43,14 +41,14 @@ class CountOfIngredientsAdmin(ModelAdmin):
     readonly_fields = ('get_weight',)
     list_filter = ('ingredients',)
     ordering = ('ingredients',)
-    empty_value_display = EMPTY
+    empty_value_display = '< Тут Пусто >'
 
     @display(description='Единица измерения')
     def get_weight(self, obj):
         try:
             return obj.ingredients.weight
         except CountOfIngredients.ingredients.RelatedObjectDoesNotExist:
-            return EMPTY
+            return '< Тут Пусто >'
 
     @display(description='Количество ссылок в рецептах')
     def get_recipes_count(self, obj):
@@ -61,4 +59,4 @@ class CountOfIngredientsAdmin(ModelAdmin):
 class FavoriteAdmin(ModelAdmin):
     list_display = ('user', 'recipes',)
     list_filter = ('user', 'recipes',)
-    empty_value_display = EMPTY
+    empty_value_display = '< Тут Пусто >'

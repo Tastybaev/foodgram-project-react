@@ -11,11 +11,19 @@ class UserSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = (
-            'id', 'email', 'login', 'first_name', 'last_name', 'password',
+            'id', 
+            'email', 
+            'login', 
+            'first_name', 
+            'last_name', 
+            'password',
             'is_subscribed',
         )
         extra_kwargs = {
-            'password': {'write_only': True, 'required': True},
+            'password': {
+                'write_only': True,
+                'required': True
+            },
         }
 
     def is_subscribed_user(self, obj):

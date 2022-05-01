@@ -102,7 +102,7 @@ class UserSubscribeViewSet(UserViewSet):
 
 class ShoppingListViewSet(GenericViewSet):
     NAME = 'ingredient_name'
-    MEASUREMENT_UNIT = 'ingredient_measurement_unit'
+    WEIGHT = 'ingredient_weight'
     permission_classes = (IsAuthenticated,)
     serializer_class = RecipesShortReadSerializer
     queryset = Shoppinglist.objects.all()
@@ -114,7 +114,7 @@ class ShoppingListViewSet(GenericViewSet):
         )
         return (
             recipes.order_by(self.NAME)
-            .values(self.NAME, self.MEASUREMENT_UNIT)
+            .values(self.NAME, self.WEIGHT)
             .annotate(total=Sum('ingredients__amount'))
         )
 
@@ -123,7 +123,7 @@ class ShoppingListViewSet(GenericViewSet):
         for ingredient in ingredients:
             content += (
                 f'{ingredient[self.NAME]}'
-                f' ({ingredient[self.MEASUREMENT_UNIT]})'
+                f' ({ingredient[self.WEIGHT]})'
                 f' — {ingredient["total"]}\r\n'
             )
         return content

@@ -4,8 +4,6 @@ from django_filters.rest_framework import *
 from users.models import Shoppinglist
 from .models import Ingredients, Recipes
 
-ERROR_NAME= "Имя не найдено!"
-
 
 class IngredientsSearchFilter(FilterSet):
     name = CharFilter(method='search_by_name')
@@ -72,5 +70,5 @@ class SearhIndigrients(FilterSet):
 
     def search_by_name(self, name):
         if not name:
-            return ERROR_NAME
+            return "Имя не найдено!"
         return name.objects.all()

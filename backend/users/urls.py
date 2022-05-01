@@ -18,7 +18,11 @@ auth_patterns = [
         TokenCreateWithCheckBlockStatusView.as_view(),
         name="login",
     ),
-    path('token/logout/', TokenDestroyView.as_view(), name="logout"),
+    path(
+        'token/logout/', 
+        TokenDestroyView.as_view(), 
+        name="logout"
+    ),
 ]
 
 urlpatterns = [
