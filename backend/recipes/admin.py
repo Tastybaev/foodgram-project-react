@@ -1,6 +1,6 @@
 from django.contrib.admin import ModelAdmin, display, register
 
-from .models import *
+from .models import CountOfIngredient, Favorite, Ingredient, Recipe, Tag
 
 
 @register(Tag)
@@ -11,17 +11,17 @@ class TagAdmin(ModelAdmin):
     empty_value_display = '< Тут Пусто >'
 
 
-@register(Ingredients)
-class IngredientsAdmin(ModelAdmin):
-    list_display = ('name', 'weight',)
+@register(Ingredient)
+class IngredientAdmin(ModelAdmin):
+    list_display = ('name', 'measurement_unit',)
     list_filter = ('name',)
     search_fields = ('name',)
-    ordering = ('weight',)
+    ordering = ('measurement_unit',)
     empty_value_display = '< Тут Пусто >'
 
 
-@register(Recipes)
-class RecipesAdmin(ModelAdmin):
+@register(Recipe)
+class RecipeAdmin(ModelAdmin):
     list_display = ('name', 'author',)
     list_filter = ('name', 'author', 'tags',)
     readonly_fields = ('added_in_favorites',)
@@ -32,22 +32,22 @@ class RecipesAdmin(ModelAdmin):
         return obj.favorites.count()
 
 
-@register(CountOfIngredients)
-class CountOfIngredientsAdmin(ModelAdmin):
+@register(CountOfIngredient)
+class CountOfIngredientAdmin(ModelAdmin):
     list_display = (
-        'id', 'ingredients', 'amount', 'get_weight',
+        'id', 'ingredient', 'amount', 'get_measurement_unit',
         'get_recipes_count',
     )
-    readonly_fields = ('get_weight',)
-    list_filter = ('ingredients',)
-    ordering = ('ingredients',)
+    readonly_fields = ('get_measurement_unit',)
+    list_filter = ('ingredient',)
+    ordering = ('ingredient',)
     empty_value_display = '< Тут Пусто >'
 
     @display(description='Единица измерения')
-    def get_weight(self, obj):
+    def get_measurement_unit(self, obj):
         try:
-            return obj.ingredients.weight
-        except CountOfIngredients.ingredients.RelatedObjectDoesNotExist:
+            return obj.ingredient.measurement_unit
+        except CountOfIngredient.ingredient.RelatedObjectDoesNotExist:
             return '< Тут Пусто >'
 
     @display(description='Количество ссылок в рецептах')
@@ -55,8 +55,9 @@ class CountOfIngredientsAdmin(ModelAdmin):
         return obj.recipes.count()
 
 
+
 @register(Favorite)
 class FavoriteAdmin(ModelAdmin):
-    list_display = ('user', 'recipes',)
-    list_filter = ('user', 'recipes',)
+    list_display = ('user', 'recipe',)
+    list_filter = ('user', 'recipe',)
     empty_value_display = '< Тут Пусто >'

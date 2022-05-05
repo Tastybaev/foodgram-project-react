@@ -1,9 +1,9 @@
 from rest_framework.serializers import ModelSerializer
 
-from recipes.models import Recipes
+from recipes.models import Recipe
 
 
-class RecipesShortReadSerializer(ModelSerializer):
+class RecipeShortReadSerializer(ModelSerializer):
     class Meta:
-        model = Recipes
+        model = Recipe
         fields = '__all__'

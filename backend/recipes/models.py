@@ -1,6 +1,18 @@
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
-from django.db.models import *
+from django.db.models import (
+    CASCADE,
+    SET_NULL,
+    CharField,
+    ForeignKey,
+    ImageField,
+    ManyToManyField,
+    Model,
+    PositiveIntegerField,
+    SlugField,
+    TextField,
+    UniqueConstraint
+)
 
 from django.urls import reverse
 
@@ -22,6 +34,10 @@ class Tag(Model):
     color = CharField('Хекскод цвета', max_length=7)
     slug = SlugField('Слаг', max_length=200)
 
+    class Meta:
+        verbose_name = 'Тег'
+        verbose_name_plural = 'Теги'
+
     def __str__(self):
         return f'{self.name}'
     
@@ -29,24 +45,24 @@ class Tag(Model):
         return reverse('tag', args=[self.slug])
 
 
-class Ingredients(Model):
+class Ingredient(Model):
     name = CharField('Название ингредиента',
        max_length=50
     )
-    weight = CharField('Единица измерения',
+    measurement_unit = CharField('Единица измерения',
         max_length=50
     )
     class Meta:
-        verbose_name = 'ingredients'
+        verbose_name = 'ingredient'
         verbose_name_plural = 'ingredients'
         ordering = ['name',]
 
     def __str__(self):
         return f'{self.name}'
 
-class CountOfIngredients(Model):
-    ingredients = ForeignKey(
-        Ingredients,
+class CountOfIngredient(Model):
+    ingredient = ForeignKey(
+        Ingredient,
         on_delete=CASCADE,
         related_name='count_in_recipes',
         verbose_name='Ингредиент',
@@ -66,19 +82,19 @@ class CountOfIngredients(Model):
         verbose_name_plural = 'Количество ингредиентов'
         constraints = (
             UniqueConstraint(
-                fields=('ingredients', 'amount',),
+                fields=('ingredient', 'amount',),
                 name='unique_ingredient_amount',
             ),
         )
 
     def __str__(self):
         return (
-            f'{self.ingredients.name} - {self.amount}'
-            f' ({self.ingredients.weight})'
+            f'{self.ingredient.name} - {self.amount}'
+            f' ({self.ingredient.measurement_unit})'
         )
 
 
-class Recipes(Model):
+class Recipe(Model):
     author = ForeignKey(
         User,
         on_delete=SET_NULL,
@@ -97,7 +113,7 @@ class Recipes(Model):
         verbose_name='Теги',
     )
     ingredients = ManyToManyField(
-        CountOfIngredients,
+        CountOfIngredient,
         related_name='count_in_recipes',
         verbose_name='Ингредиент',
     )
@@ -113,7 +129,7 @@ class Recipes(Model):
         return f'{self.name} ({self.author})'
 
     def get_absoulute_url(self):
-        return reverse('recipes', args=[self.pk])
+        return reverse('recipe', args=[self.pk])
 
 
 class Favorite(Model):
@@ -123,8 +139,8 @@ class Favorite(Model):
         related_name='favorites',
         verbose_name='Пользователь',
     )
-    recipes = ForeignKey(
-        Recipes,
+    recipe = ForeignKey(
+        Recipe,
         on_delete=CASCADE,
         related_name='favorites',
         verbose_name='Рецепт',
@@ -135,10 +151,10 @@ class Favorite(Model):
         verbose_name_plural = 'Избранное'
         constraints = (
             UniqueConstraint(
-                fields=('user', 'recipes',),
-                name='unique_user_recipes',
+                fields=('user', 'recipe',),
+                name='unique_user_recipe',
             ),
         )
 
     def __str__(self):
-        return f'{self.user} -> {self.recipes}'
+        return f'{self.user} -> {self.recipe}'

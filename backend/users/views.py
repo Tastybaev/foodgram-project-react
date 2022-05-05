@@ -16,11 +16,12 @@ from rest_framework.status import (
 from rest_framework.viewsets import GenericViewSet
 
 from foodgram.pagination import LimitPageNumberPagination
-from recipes.models import Recipes
-from recipes.serializers.special import RecipesShortReadSerializer
-from .models import Shoppinglist, Subscribe, User
+from recipes.models import Recipe
+from recipes.serializers.special import RecipeShortReadSerializer
+from .models import ShoppingList, Subscribe, User
 from .serializers import SubscriptionSerializer
 
+FILE_NAME = 'shopping_list.txt'
 
 class TokenCreateWithCheckBlockStatusView(TokenCreateView):
     def _action(self, serializer):
@@ -101,20 +102,20 @@ class UserSubscribeViewSet(UserViewSet):
 
 
 class ShoppingListViewSet(GenericViewSet):
-    NAME = 'ingredient_name'
-    WEIGHT = 'ingredient_weight'
+    name = 'ingredient_name'
+    measurement_unit = 'ingredient_measurement_unit'
     permission_classes = (IsAuthenticated,)
-    serializer_class = RecipesShortReadSerializer
-    queryset = Shoppinglist.objects.all()
+    serializer_class = RecipeShortReadSerializer
+    queryset = ShoppingList.objects.all()
     http_method_names = ('get', 'delete',)
 
     def generate_shopping_list_data(self, request):
         recipes = (
-            request.user.Shoppinglist.recipes.prefetch_related('ingredients')
+            request.user.ShoppingList.recipes.prefetch_related('ingredients')
         )
         return (
-            recipes.order_by(self.NAME)
-            .values(self.NAME, self.WEIGHT)
+            recipes.order_by(self.name)
+            .values(self.name, self.measurement_unit)
             .annotate(total=Sum('ingredients__amount'))
         )
 
@@ -122,8 +123,8 @@ class ShoppingListViewSet(GenericViewSet):
         content = ''
         for ingredient in ingredients:
             content += (
-                f'{ingredient[self.NAME]}'
-                f' ({ingredient[self.WEIGHT]})'
+                f'{ingredient[self.name]}'
+                f' ({ingredient[self.measurement_unit]})'
                 f' — {ingredient["total"]}\r\n'
             )
         return content
@@ -132,7 +133,7 @@ class ShoppingListViewSet(GenericViewSet):
     def download_shopping_list(self, request):
         try:
             ingredients = self.generate_shopping_list_data(request)
-        except Shoppinglist.DoesNotExist:
+        except ShoppingList.DoesNotExist:
             return Response(
                 {ERRORS_KEY: 'Список покупок не существует!'},
                 status=HTTP_400_BAD_REQUEST
@@ -144,36 +145,36 @@ class ShoppingListViewSet(GenericViewSet):
         response['Content-Disposition'] = f'attachment; filename={FILE_NAME}'
         return response
 
-    def add_to_shopping_list(self, request, Recipes, Shoppinglist):
-        if Shoppinglist.recipes.filter(pk__in=(recipes.pk,)).exists():
+    def add_to_shopping_list(self, request, recipe, shopping_list):
+        if Shoppinglist.recipes.filter(pk__in=(recipe.pk,)).exists():
             return Response(
                 {ERRORS_KEY: 'Нельзя подписаться дважды!'},
                 status=HTTP_400_BAD_REQUEST,
             )
-        Shoppinglist.recipes.add(recipes)
-        serializer = self.get_serializer(recipes)
+        shopping_list.recipes.add(recipe)
+        serializer = self.get_serializer(recipe)
         return Response(
             serializer.data,
             status=HTTP_201_CREATED,
         )
 
-    def remove_from_shopping_list(self, request, Recipes, Shoppinglist):
-        if not Shoppinglist.Recipes.filter(pk__in=(Recipes.pk,)).exists():
+    def remove_from_shopping_list(self, request, recipes, shopping_list):
+        if not shopping_list.recipe.filter(pk__in=(recipe.pk,)).exists():
             return Response(
                 {ERRORS_KEY: 'В списке покупок такого рецепта нет!'},
                 status=HTTP_400_BAD_REQUEST,
             )
-        Shoppinglist.recipes.remove(recipes)
+        shopping_list.recipes.remove(recipe)
         return Response(
             status=HTTP_204_NO_CONTENT,
         )
 
     @action(methods=('get', 'delete',), detail=True)
     def shopping_list(self, request, pk=None):
-        recipes = get_object_or_404(Recipes, pk=pk)
+        recipe = get_object_or_404(Recipes, pk=pk)
         shopping_list = (
-            Shoppinglist.objects.get_or_create(user=request.user)[0]
+            ShoppingList.objects.get_or_create(user=request.user)[0]
         )
         if request.method == 'GET':
-            return self.add_to_shopping_list(request, recipes, shopping_list)
-        return self.remove_from_shopping_list(request, recipes, shopping_list)
+            return self.add_to_shopping_list(request, recipe, shopping_list)
+        return self.remove_from_shopping_list(request, recipe, shopping_list)

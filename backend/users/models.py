@@ -1,5 +1,15 @@
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
-from django.db.models import *
+from django.db.models import (
+    CASCADE,
+    BooleanField,
+    CharField,
+    EmailField,
+    ForeignKey,
+    ManyToManyField,
+    Model,
+    OneToOneField,
+    UniqueConstraint
+)
 
 from .managers import UserManager
 
@@ -61,7 +71,7 @@ class Subscribe(Model):
         return f'{self.user} -> {self.author}'
 
 
-class Shoppinglist(Model):
+class ShoppingList(Model):
     user = OneToOneField(
         User,
         on_delete=CASCADE,
@@ -69,7 +79,7 @@ class Shoppinglist(Model):
         verbose_name='Подписчик на корзину'
     )
     recipes = ManyToManyField(
-        'recipes.Recipes',
+        'recipes.Recipe',
         related_name='Shoppinglist',
         verbose_name='Рецепты',
     )

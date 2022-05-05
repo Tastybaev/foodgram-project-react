@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 from drf_extra_fields.fields import Base64ImageField
-from rest_framework.serializers import 
+from rest_framework.serializers import (
     CharField,
     IntegerField,
     ListField,
@@ -8,13 +8,16 @@ from rest_framework.serializers import
     SerializerMethodField,
     SlugRelatedField,
     ValidationError
+)
 
-from recipes.models import 
-    CountOfIngredients,
-    Ingredients,
-    Recipes,
+from recipes.models import (
+    COOKING_TIME_MIN_ERROR,
+    CountOfIngredient,
+    Ingredient,
+    Recipe,
     Tag
-from users.models import Shoppinglist
+)
+from users.models import ShoppingList
 from users.serializers import UserSerializer
 
 TAGS_UNIQUE_ERROR = 'Теги не могут повторяться!'
@@ -36,15 +39,15 @@ class TagSerializer(ModelSerializer):
         fields = ('id', 'name', 'color', 'slug',)
 
 
-class IngredientsSerializer(ModelSerializer):
+class IngredientSerializer(ModelSerializer):
     class Meta:
-        model = Ingredients
-        fields = ('id', 'name', 'weight',)
+        model = Ingredient
+        fields = ('id', 'name', 'measurement_unit',)
 
 
-class RecipesIngredientWriteSerializer(ModelSerializer):
+class RecipeIngredientWriteSerializer(ModelSerializer):
     class Meta:
-        model = CountOfIngredients
+        model = CountOfIngredient
         fields = ('id', 'amount',)
         extra_kwargs = {
             'id': {
@@ -63,25 +66,25 @@ class RecipesIngredientWriteSerializer(ModelSerializer):
         }
 
 
-class RecipesIngredientReadSerializer(ModelSerializer):
+class RecipeIngredientReadSerializer(ModelSerializer):
     id = IntegerField()
     name = CharField()
-    weight = CharField()
+    measurement_unit = CharField()
 
     class Meta:
-        model = CountOfIngredients
-        fields = ('id', 'name', 'weight', 'amount',)
+        model = CountOfIngredient
+        fields = ('id', 'name', 'measurement_unit', 'amount',)
 
 
-class RecipesReadSerializer(ModelSerializer):
+class RecipeReadSerializer(ModelSerializer):
     tags = TagSerializer(many=True)
     author = UserSerializer()
-    ingredients = RecipesIngredientReadSerializer(many=True)
+    ingredients = RecipeIngredientReadSerializer(many=True)
     is_favorited = SerializerMethodField()
     is_in_shopping_list = SerializerMethodField()
 
     class Meta:
-        model = Recipes
+        model = Recipe
         fields = '__all__'
 
     def get_user(self):
@@ -91,7 +94,7 @@ class RecipesReadSerializer(ModelSerializer):
         user = self.get_user()
         return (
             user.is_authenticated
-            and user.favorites.filter(recipes=obj).exists()
+            and user.favorites.filter(recipe=obj).exists()
         )
 
     def get_is_in_shopping_list(self, obj):
@@ -99,14 +102,14 @@ class RecipesReadSerializer(ModelSerializer):
         try:
             return (
                 user.is_authenticated and
-                user.Shoppinglist.Recipes.filter(pk__in=(obj.pk,)).exists()
+                user.ShoppingList.Recipes.filter(pk__in=(obj.pk,)).exists()
             )
-        except Shoppinglist.DoesNotExist:
+        except ShoppingList.DoesNotExist:
             return False
 
 
-class RecipesWriteSerializer(ModelSerializer):
-    ingredients = RecipesIngredientWriteSerializer(many=True)
+class RecipeWriteSerializer(ModelSerializer):
+    ingredients = RecipeIngredientWriteSerializer(many=True)
     tags = ListField(
         child=SlugRelatedField(
             slug_field='id',
@@ -116,7 +119,7 @@ class RecipesWriteSerializer(ModelSerializer):
     image = Base64ImageField()
 
     class Meta:
-        model = Recipes
+        model = Recipe
         fields = (
             'ingredients', 'tags', 'image', 'name', 'text', 'cooking_time',
         )
@@ -155,11 +158,11 @@ class RecipesWriteSerializer(ModelSerializer):
             validated_data.pop('ingredients'), validated_data.pop('tags')
         )
         for ingredient in ingredients:
-            count_of_ingredients, _ = CountOfIngredients.objects.get_or_create(
+            count_of_ingredient, _ = CountOfIngredient.objects.get_or_create(
                 ingredient=get_object_or_404(Ingredient, pk=ingredient['id']),
                 amount=ingredient['amount'],
             )
-            instance.ingredients.add(count_of_ingredients)
+            instance.ingredients.add(count_of_ingredient)
         for tag in tags:
             instance.tags.add(tag)
         return instance
@@ -168,7 +171,7 @@ class RecipesWriteSerializer(ModelSerializer):
         saved = {}
         saved['ingredients'] = validated_data.pop('ingredients')
         saved['tags'] = validated_data.pop('tags')
-        recipe = Recipes.objects.create(**validated_data)
+        recipe = Recipe.objects.create(**validated_data)
         return self.add_ingredients_and_tags(recipe, saved)
 
     def update(self, instance, validated_data):
