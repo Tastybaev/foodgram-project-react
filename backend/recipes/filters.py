@@ -1,4 +1,4 @@
-from django.db.models import IntegerField, Value
+from django.db.models import IntegerField, Value, values_list
 from django_filters.rest_framework import (
     AllValuesMultipleFilter,
     BooleanFilter,
@@ -49,7 +49,7 @@ class RecipeFilter(FilterSet):
             return queryset
         favorites = self.request.user.favorites.all()
         return queryset.filter(
-            pk__in=(favorite.recipe.pk for favorite in favorites)
+            pk__in=favorites.objects.values_list(recipe.pk)
         )
 
     def get_is_in_shopping_list(self, queryset, name, value):
@@ -62,7 +62,7 @@ class RecipeFilter(FilterSet):
         except ShoppingList.DoesNotExist:
             return queryset
         return queryset.filter(
-            pk__in=(recipe.pk for recipe in recipes)
+            pk__in=recipes.objects.values_list(pk)
         )
 
 

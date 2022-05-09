@@ -25,7 +25,6 @@ from .serializers.general import (
 )
 from .serializers.special import RecipeShortReadSerializer
 
-
 ERRORS_KEY = 'errors'
 
 
@@ -59,15 +58,18 @@ class RecipeViewSet(ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+    def generator(self,serializer):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         serializer = RecipeReadSerializer(
             instance=serializer.instance,
             context={'request': self.request}
         )
-        headers = self.get_success_headers(serializer.data)
+        return serializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        headers = self.get_success_headers(generator(serializer).data)
         return Response(
             serializer.data, status=HTTP_201_CREATED, headers=headers
         )
@@ -78,14 +80,9 @@ class RecipeViewSet(ModelViewSet):
         serializer = self.get_serializer(
             instance, data=request.data, partial=partial
         )
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        serializer = RecipeReadSerializer(
-            instance=serializer.instance,
-            context={'request': self.request},
-        )
+        
         return Response(
-            serializer.data, status=HTTP_200_OK
+            generator(serializer).data, status=HTTP_200_OK
         )
 
     def add_to_favorite(self, request, recipe):

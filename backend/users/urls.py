@@ -2,8 +2,11 @@ from django.urls import include, path
 from djoser.views import TokenDestroyView
 from rest_framework.routers import DefaultRouter
 
-from .views import ShoppingListViewSet, TokenCreateWithCheckBlockStatusView
-from .views import UserSubscribeViewSet
+from .views import (
+    ShoppingListViewSet,
+    TokenCreateWithCheckBlockStatusView,
+    UserSubscribeViewSet
+)
 
 router = DefaultRouter()
 

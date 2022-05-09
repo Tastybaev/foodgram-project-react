@@ -55,7 +55,6 @@ class CountOfIngredientAdmin(ModelAdmin):
         return obj.recipes.count()
 
 
-
 @register(Favorite)
 class FavoriteAdmin(ModelAdmin):
     list_display = ('user', 'recipe',)

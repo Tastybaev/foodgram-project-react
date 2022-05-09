@@ -16,7 +16,6 @@ from django.db.models import (
 
 from django.urls import reverse
 
-
 User = get_user_model()
 
 INGREDIENT_MIN_AMOUNT = 1
@@ -29,9 +28,10 @@ INGREDIENT_MIN_AMOUNT_ERROR = (
     'Количество ингредиентов не может быть меньше {min_value}!'
 )
 
+
 class Tag(Model):
     name = CharField(max_length=50)
-    color = CharField('Хекскод цвета', max_length=7)
+    color = CharField('Хекскод цвета', max_length=99)
     slug = SlugField('Слаг', max_length=200)
 
     class Meta:
@@ -59,6 +59,7 @@ class Ingredient(Model):
 
     def __str__(self):
         return f'{self.name}'
+
 
 class CountOfIngredient(Model):
     ingredient = ForeignKey(
