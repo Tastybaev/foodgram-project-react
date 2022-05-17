@@ -15,11 +15,11 @@ from .managers import UserManager
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    login = CharField(max_length=25)
-    password = CharField(max_length=25)
+    login = CharField(max_length=255)
+    password = CharField(max_length=255)
     email = EmailField(help_text='email address', unique=True)
-    first_name = CharField(max_length=25)
-    last_name = CharField(max_length=25 )
+    first_name = CharField(max_length=255)
+    last_name = CharField(max_length=255)
     is_superuser = BooleanField('Администратор', default=False)
     is_blocked = BooleanField('Заблокирован', default=False)
 
@@ -74,13 +74,14 @@ class Subscribe(Model):
 class ShoppingList(Model):
     user = OneToOneField(
         User,
+        unique=True,
         on_delete=CASCADE,
         related_name='Shoppinglist',
         verbose_name='Подписчик на корзину'
     )
     recipes = ManyToManyField(
         'recipes.Recipe',
-        related_name='Shoppinglist',
+        related_name='ShoppingList',
         verbose_name='Рецепты',
     )
 

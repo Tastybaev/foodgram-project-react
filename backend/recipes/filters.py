@@ -1,4 +1,4 @@
-from django.db.models import IntegerField, Value, values_list
+from django.db.models import IntegerField, Value
 from django_filters.rest_framework import (
     AllValuesMultipleFilter,
     BooleanFilter,
@@ -27,7 +27,7 @@ class IngredientSearchFilter(FilterSet):
         )
         contain_queryset = (
             queryset.filter(name__icontains=value).exclude(
-                pk__in=(ingredient.pk for ingredient in start_with_queryset)
+                pk__in=start_with_queryset.values_list('pk')
             ).annotate(
                 order=Value(1, IntegerField())
             )
@@ -47,22 +47,19 @@ class RecipeFilter(FilterSet):
     def get_is_favorited(self, queryset, name, value):
         if not value:
             return queryset
-        favorites = self.request.user.favorites.all()
+        favorites = self.request.user.favorites.values_list('pk')
         return queryset.filter(
-            pk__in=favorites.objects.values_list(recipe.pk)
+            pk__in=favorites
         )
 
     def get_is_in_shopping_list(self, queryset, name, value):
         if not value:
             return queryset
-        try:
-            recipes = (
-                self.request.user.shopping_list.recipes.all()
-            )
-        except ShoppingList.DoesNotExist:
-            return queryset
+        recipes = (
+            self.request.user.ShoppingList.recipes.values_list('pk')
+        )
         return queryset.filter(
-            pk__in=recipes.objects.values_list(pk)
+            pk__in=recipes
         )
 
 

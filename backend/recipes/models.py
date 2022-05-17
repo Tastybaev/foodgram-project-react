@@ -30,9 +30,9 @@ INGREDIENT_MIN_AMOUNT_ERROR = (
 
 
 class Tag(Model):
-    name = CharField(max_length=50)
-    color = CharField('Хекскод цвета', max_length=99)
-    slug = SlugField('Слаг', max_length=200)
+    name = CharField(max_length=255)
+    color = CharField('Хекскод цвета', max_length=255)
+    slug = SlugField('Слаг', max_length=255)
 
     class Meta:
         verbose_name = 'Тег'
@@ -47,10 +47,10 @@ class Tag(Model):
 
 class Ingredient(Model):
     name = CharField('Название ингредиента',
-       max_length=50
+       max_length=255
     )
     measurement_unit = CharField('Единица измерения',
-        max_length=50
+        max_length=255
     )
     class Meta:
         verbose_name = 'ingredient'

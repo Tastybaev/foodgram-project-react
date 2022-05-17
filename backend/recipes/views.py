@@ -58,7 +58,7 @@ class RecipeViewSet(ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
-    def generator(self,serializer):
+    def generator(self, serializer):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         serializer = RecipeReadSerializer(
