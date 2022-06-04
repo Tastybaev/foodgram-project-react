@@ -58,18 +58,15 @@ class RecipeViewSet(ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
-    def generator(self, serializer):
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         serializer = RecipeReadSerializer(
             instance=serializer.instance,
             context={'request': self.request}
         )
-        return serializer
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        headers = self.get_success_headers(generator(serializer).data)
+        headers = self.get_success_headers(serializer.data)
         return Response(
             serializer.data, status=HTTP_201_CREATED, headers=headers
         )
@@ -79,6 +76,15 @@ class RecipeViewSet(ModelViewSet):
         instance = self.get_object()
         serializer = self.get_serializer(
             instance, data=request.data, partial=partial
+        )
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        serializer = RecipeReadSerializer(
+            instance=serializer.instance,
+            context={'request': self.request},
+        )
+        return Response(
+            serializer.data, status=HTTP_200_OK
         )
         
         return Response(

@@ -67,9 +67,9 @@ class RecipeIngredientWriteSerializer(ModelSerializer):
 
 
 class RecipeIngredientReadSerializer(ModelSerializer):
-    id = IntegerField()
-    name = CharField()
-    measurement_unit = CharField()
+    id = IntegerField(source='ingredient.id')
+    name = CharField(source='ingredient.name')
+    measurement_unit = CharField(source='ingredient.measurement_unit')
 
     class Meta:
         model = CountOfIngredient

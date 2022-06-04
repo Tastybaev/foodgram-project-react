@@ -146,40 +146,29 @@ class ShoppingListViewSet(GenericViewSet):
         response['Content-Disposition'] = f'attachment; filename={FILE_NAME}'
         return response
 
-    def shopping_list_staff(self, request, recipe, ShoppingList, choice):
-        if ShoppingList.recipes.filter(pk__in=(recipe.pk,)).exists() and choice:
+    def add_to_shopping_list(self, request, recipe, shopping_list):
+        if Shoppinglist.recipes.filter(pk__in=(recipe.pk,)).exists():
             return Response(
                 {ERRORS_KEY: 'Нельзя подписаться дважды!'},
                 status=HTTP_400_BAD_REQUEST,
             )
-        elif choice:
-            ShoppingList.recipes.add(recipe)
-            serializer = self.get_serializer(recipe)
-            return Response(
-                serializer.data,
-                status=HTTP_201_CREATED,
-            )
-        elif not choice:
+        shopping_list.recipes.add(recipe)
+        serializer = self.get_serializer(recipe)
+        return Response(
+            serializer.data,
+            status=HTTP_201_CREATED,
+        )
+
+    def remove_from_shopping_list(self, request, recipes, shopping_list):
+        if not shopping_list.recipe.filter(pk__in=(recipe.pk,)).exists():
             return Response(
                 {ERRORS_KEY: 'В списке покупок такого рецепта нет!'},
                 status=HTTP_400_BAD_REQUEST,
             )
-        else:
-            ShoppingList.recipes.remove(recipe)
-            return Response(
-                status=HTTP_204_NO_CONTENT,
-            )
-            
-    def add_to_shopping_list(
-        self, request, recipe, ShoppingList, shopping_list_staff
-    ):
-        shopping_list_staff( request, recipe, ShoppingList, True)
-            
-
-    def remove_from_shopping_list(
-        self, request, recipes, ShoppingList, shopping_list_staff
-    ):
-        shopping_list_staff( request, recipe, ShoppingList, False)
+        shopping_list.recipes.remove(recipe)
+        return Response(
+            status=HTTP_204_NO_CONTENT,
+        )
 
     @action(methods=('get', 'delete',), detail=True)
     def shopping_list(self, request, pk=None):

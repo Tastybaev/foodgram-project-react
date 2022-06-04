@@ -9,9 +9,9 @@ from .views import (
 )
 
 router = DefaultRouter()
-router.register(r'Tag', TagViewSet, basename='tags')
-router.register(r'Ingredients', IngredientViewSet, basename='ingredients')
-router.register(r'Recipes', RecipeViewSet, basename='recipes')
+router.register(r'tags', TagViewSet, basename='tags')
+router.register(r'ingredients', IngredientViewSet, basename='ingredients')
+router.register(r'recipes', RecipeViewSet, basename='recipes')
 
 app_name = 'recipes'
 

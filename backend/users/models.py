@@ -76,7 +76,7 @@ class ShoppingList(Model):
         User,
         unique=True,
         on_delete=CASCADE,
-        related_name='Shoppinglist',
+        related_name='ShoppingList',
         verbose_name='Подписчик на корзину'
     )
     recipes = ManyToManyField(

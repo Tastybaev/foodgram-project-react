@@ -47,7 +47,7 @@ vim nginx.conf
 ### Настройка проекта
 1. Запустите docker compose:
 ```bash
-docker-compose up -d
+docker-compose up -d --build
 ```
 2. Примените миграции:
 ```bash
@@ -76,7 +76,7 @@ docker-compose exec backend python manage.py shell
 ```
 2. Импортируем нужные модели:
 ```python
-from recipes.models import Ingredient, Tags
+from recipes.models import Ingredient, Tag
 ```
 3. Импортируем скрипт:
 ```python
@@ -93,7 +93,7 @@ from scripts.import_data import create_models
 
 Пример:
 ```python
-create_models('../data/ingredients.csv', Ingredient, True)
+create_models('data/ingredients.csv', Ingredient, True)
 ```
 
 ## Сайт
