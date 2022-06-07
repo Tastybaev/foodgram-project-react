@@ -55,7 +55,7 @@ class Ingredient(Model):
     class Meta:
         verbose_name = 'ingredient'
         verbose_name_plural = 'ingredients'
-        ordering = ['name',]
+        ordering = ('name',)
 
     def __str__(self):
         return f'{self.name}'
@@ -114,8 +114,8 @@ class Recipe(Model):
         verbose_name='Теги',
     )
     ingredients = ManyToManyField(
-        CountOfIngredient,
-        related_name='count_in_recipes',
+        'CountOfIngredient',
+        related_name='recipes',
         verbose_name='Ингредиент',
     )
     cooking_time = PositiveIntegerField(
