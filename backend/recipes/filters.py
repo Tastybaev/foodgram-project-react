@@ -6,7 +6,7 @@ from django_filters.rest_framework import (
     FilterSet
 )
 
-from users.models import ShoppingList
+from users.models import ShoppingCart
 from .models import Ingredient, Recipe
 
 
@@ -37,7 +37,7 @@ class IngredientSearchFilter(FilterSet):
 
 class RecipeFilter(FilterSet):
     is_favorited = BooleanFilter(method='get_is_favorited')
-    is_in_shopping_list = BooleanFilter(method='get_is_in_shopping_list')
+    is_in_shopping_cart = BooleanFilter(method='get_is_in_shopping_cart')
     tags = AllValuesMultipleFilter(field_name='tags__slug')
 
     class Meta:
@@ -52,12 +52,28 @@ class RecipeFilter(FilterSet):
             pk__in=favorites
         )
 
-    def get_is_in_shopping_list(self, queryset, name, value):
+    def get_is_in_shopping_cart(self, queryset, name, value):
         if not value:
             return queryset
-        recipes = (
-            self.request.user.ShoppingList.recipes.values_list('pk')
-        )
+        try:
+            recipes = (
+                self.request.user.shopping_cart.recipes.values_list('pk')
+            )
+        except ShoppingCart.DoesNotExist:
+            return queryset
         return queryset.filter(
             pk__in=recipes
         )
+
+
+class SearhIngredient(FilterSet):
+    name = CharFilter(method='search_by_name')
+
+    class Meta:
+        model = Ingredient
+        fields = ('name',)
+
+    def search_by_name(self, name):
+        if not name:
+            return "Имя не найдено!"
+        return name.objects.all()

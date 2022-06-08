@@ -86,10 +86,6 @@ class RecipeViewSet(ModelViewSet):
         return Response(
             serializer.data, status=HTTP_200_OK
         )
-        
-        return Response(
-            generator(serializer).data, status=HTTP_200_OK
-        )
 
     def add_to_favorite(self, request, recipe):
         try:

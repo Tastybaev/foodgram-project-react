@@ -17,7 +17,7 @@ from recipes.models import (
     Recipe,
     Tag
 )
-from users.models import ShoppingList
+from users.models import ShoppingCart
 from users.serializers import UserSerializer
 
 TAGS_UNIQUE_ERROR = 'Теги не могут повторяться!'
@@ -81,7 +81,7 @@ class RecipeReadSerializer(ModelSerializer):
     author = UserSerializer()
     ingredients = RecipeIngredientReadSerializer(many=True)
     is_favorited = SerializerMethodField()
-    is_in_shopping_list = SerializerMethodField()
+    is_in_shopping_cart = SerializerMethodField()
 
     class Meta:
         model = Recipe
@@ -97,14 +97,14 @@ class RecipeReadSerializer(ModelSerializer):
             and user.favorites.filter(recipe=obj).exists()
         )
 
-    def get_is_in_shopping_list(self, obj):
+    def get_is_in_shopping_cart(self, obj):
         user = self.get_user()
         try:
             return (
                 user.is_authenticated and
-                user.ShoppingList.Recipes.filter(pk__in=(obj.pk,)).exists()
+                user.shopping_cart.recipes.filter(pk__in=(obj.pk,)).exists()
             )
-        except ShoppingList.DoesNotExist:
+        except ShoppingCart.DoesNotExist:
             return False
 
 

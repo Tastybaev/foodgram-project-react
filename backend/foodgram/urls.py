@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path
 from django.urls.conf import include
 
-from .settings import DEBUG
+from foodgram.settings import DEBUG
 
 api = [
     path('', include('users.urls', namespace='users')),

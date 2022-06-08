@@ -3,7 +3,7 @@ from djoser.views import TokenDestroyView
 from rest_framework.routers import DefaultRouter
 
 from .views import (
-    ShoppingListViewSet,
+    ShoppingCartViewSet,
     TokenCreateWithCheckBlockStatusView,
     UserSubscribeViewSet
 )
@@ -11,11 +11,11 @@ from .views import (
 router = DefaultRouter()
 
 router.register(r'users', UserSubscribeViewSet, basename='users')
-router.register(r'recipes', ShoppingListViewSet, basename='shopping_list')
+router.register(r'recipes', ShoppingCartViewSet, basename='shopping_cart')
 
 app_name = 'users'
 
-auth_patterns = [
+authorization = [
     path(
         'token/login/',
         TokenCreateWithCheckBlockStatusView.as_view(),
@@ -29,6 +29,6 @@ auth_patterns = [
 ]
 
 urlpatterns = [
-    path('auth/', include(auth_patterns)),
+    path('auth/', include(authorization)),
     path('', include(router.urls)),
 ]

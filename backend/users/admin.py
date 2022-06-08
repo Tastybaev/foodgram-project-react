@@ -3,11 +3,14 @@ from django.contrib.auth.admin import UserAdmin
 from django.db.models import Count, Sum
 
 from .forms import CustomUserChangeForm, CustomUserCreationForm
-from .models import ShoppingList, Subscribe, User
+from .models import ShoppingCart, Subscribe, User
 
 
 @register(User)
 class UserAdmin(UserAdmin):
+    add_form = CustomUserCreationForm
+    form = CustomUserChangeForm
+    model = User
     list_display = (
         'login',
         'password',
@@ -56,7 +59,6 @@ class UserAdmin(UserAdmin):
         'first_name', 
         'last_name',
     )
-    empty_value_display = '-empty-'
     ordering = ('id', 'email', 'login',)
 
 
@@ -70,8 +72,8 @@ class SubscribeAdmin(ModelAdmin):
         verbose_name_plural = 'Подписки'
 
 
-@register(ShoppingList)
-class ShoppingListAdmin(ModelAdmin):
+@register(ShoppingCart)
+class ShoppingCartAdmin(ModelAdmin):
     list_display = ('user', 'count_ingredients',)
     readonly_fields = ('count_ingredients',)
     empty_value_display = '< Тут Пусто >'

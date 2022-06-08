@@ -18,10 +18,10 @@ from rest_framework.viewsets import GenericViewSet
 from foodgram.pagination import LimitPageNumberPagination
 from recipes.models import Recipe
 from recipes.serializers.special import RecipeShortReadSerializer
-from .models import ShoppingList, Subscribe, User
+from .models import ShoppingCart, Subscribe, User
 from .serializers import SubscriptionSerializer
 
-FILE_NAME = 'shopping_list.txt'
+FILE_NAME = 'shopping_cart.txt'
 
 
 class TokenCreateWithCheckBlockStatusView(TokenCreateView):
@@ -102,17 +102,17 @@ class UserSubscribeViewSet(UserViewSet):
         return self.delete_subscribe(request, author)
 
 
-class ShoppingListViewSet(GenericViewSet):
+class ShoppingCartViewSet(GenericViewSet):
     name = 'ingredient_name'
     measurement_unit = 'ingredient_measurement_unit'
     permission_classes = (IsAuthenticated,)
     serializer_class = RecipeShortReadSerializer
-    queryset = ShoppingList.objects.all()
+    queryset = ShoppingCart.objects.all()
     http_method_names = ('get', 'delete',)
 
-    def generate_shopping_list_data(self, request):
+    def generate_shopping_cart_data(self, request):
         recipes = (
-            request.user.ShoppingList.recipes.prefetch_related('ingredients')
+            request.user.shopping_cart.recipes.prefetch_related('ingredients')
         )
         return (
             recipes.order_by(self.name)
@@ -131,10 +131,10 @@ class ShoppingListViewSet(GenericViewSet):
         return content
 
     @action(detail=False)
-    def download_shopping_list(self, request):
+    def download_shopping_cart(self, request):
         try:
-            ingredients = self.generate_shopping_list_data(request)
-        except ShoppingList.DoesNotExist:
+            ingredients = self.generate_shopping_cart_data(request)
+        except ShoppingCart.DoesNotExist:
             return Response(
                 {ERRORS_KEY: 'Список покупок не существует!'},
                 status=HTTP_400_BAD_REQUEST
@@ -146,36 +146,36 @@ class ShoppingListViewSet(GenericViewSet):
         response['Content-Disposition'] = f'attachment; filename={FILE_NAME}'
         return response
 
-    def add_to_shopping_list(self, request, recipe, shopping_list):
-        if Shoppinglist.recipes.filter(pk__in=(recipe.pk,)).exists():
+    def add_to_shopping_cart(self, request, recipe, shopping_cart):
+        if shopping_cart.recipes.filter(pk__in=(recipe.pk,)).exists():
             return Response(
                 {ERRORS_KEY: 'Нельзя подписаться дважды!'},
                 status=HTTP_400_BAD_REQUEST,
             )
-        shopping_list.recipes.add(recipe)
+        shopping_cart.recipes.add(recipe)
         serializer = self.get_serializer(recipe)
         return Response(
             serializer.data,
             status=HTTP_201_CREATED,
         )
 
-    def remove_from_shopping_list(self, request, recipes, shopping_list):
-        if not shopping_list.recipe.filter(pk__in=(recipe.pk,)).exists():
+    def remove_from_shopping_cart(self, request, recipe, shopping_cart):
+        if not shopping_cart.recipe.filter(pk__in=(recipe.pk,)).exists():
             return Response(
                 {ERRORS_KEY: 'В списке покупок такого рецепта нет!'},
                 status=HTTP_400_BAD_REQUEST,
             )
-        shopping_list.recipes.remove(recipe)
+        shopping_cart.recipes.remove(recipe)
         return Response(
             status=HTTP_204_NO_CONTENT,
         )
 
     @action(methods=('get', 'delete',), detail=True)
-    def shopping_list(self, request, pk=None):
-        recipe = get_object_or_404(Recipes, pk=pk)
-        shopping_list = (
-            ShoppingList.objects.get_or_create(user=request.user)[0]
+    def shopping_cart(self, request, pk=None):
+        recipe = get_object_or_404(Recipe, pk=pk)
+        shopping_cart = (
+            ShoppingCart.objects.get_or_create(user=request.user)[0]
         )
         if request.method == 'GET':
-            return self.add_to_shopping_list(request, recipe, shopping_list)
-        return self.remove_from_shopping_list(request, recipe, shopping_list)
+            return self.add_to_shopping_cart(request, recipe, shopping_cart)
+        return self.remove_from_shopping_cart(request, recipe, shopping_cart)
