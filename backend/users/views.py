@@ -160,7 +160,7 @@ class ShoppingCartViewSet(GenericViewSet):
         )
 
     def remove_from_shopping_cart(self, request, recipe, shopping_cart):
-        if not shopping_cart.recipe.filter(pk__in=(recipe.pk,)).exists():
+        if not shopping_cart.recipes.filter(pk__in=(recipe.pk,)).exists():
             return Response(
                 {ERRORS_KEY: 'В списке покупок такого рецепта нет!'},
                 status=HTTP_400_BAD_REQUEST,
