@@ -13,7 +13,7 @@ class UserSerializer(ModelSerializer):
         fields = (
             'id', 
             'email', 
-            'login', 
+            'username', 
             'first_name', 
             'last_name', 
             'password',

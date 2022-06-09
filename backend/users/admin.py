@@ -12,7 +12,7 @@ class UserAdmin(UserAdmin):
     form = CustomUserChangeForm
     model = User
     list_display = (
-        'login',
+        'username',
         'password',
         'first_name',
         'last_name',
@@ -22,14 +22,14 @@ class UserAdmin(UserAdmin):
     )
     list_filter = (
         'email',
-        'login', 
+        'username', 
         'is_blocked', 
         'is_superuser'
     )
     fieldsets = (
         (None, {'fields': (
             'email',
-            'login', 
+            'username', 
             'first_name', 
             'last_name',
             'password'
@@ -43,7 +43,7 @@ class UserAdmin(UserAdmin):
             'classes': ('wide',),
             'fields': (
                 'email',
-                'login',
+                'username',
                 'first_name',
                 'last_name',
                 'password1',
@@ -55,11 +55,11 @@ class UserAdmin(UserAdmin):
     )
     search_fields = (
         'email', 
-        'login', 
+        'username', 
         'first_name', 
         'last_name',
     )
-    ordering = ('id', 'email', 'login',)
+    ordering = ('id', 'email', 'username',)
 
 
 @register(Subscribe)

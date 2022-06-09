@@ -15,7 +15,7 @@ from .managers import UserManager
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    login = CharField('Логин', max_length=255)
+    username = CharField('Логин', max_length=255)
     password = CharField('Пароль', max_length=255)
     email = EmailField('Почта', max_length=254, unique=True)
     first_name = CharField('Имя', max_length=255)
@@ -24,7 +24,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_blocked = BooleanField('Заблокирован', default=False)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['login']
+    REQUIRED_FIELDS = ['username']
 
     objects = UserManager()
 
@@ -34,7 +34,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = 'Пользователи'  
 
     def __str__(self):
-        return self.login
+        return self.username
 
     @property
     def is_staff(self):
