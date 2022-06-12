@@ -12,19 +12,19 @@ class UserAdmin(UserAdmin):
     form = CustomUserChangeForm
     model = User
     list_display = (
+        'id',
+        'email',
         'username',
-        'password',
         'first_name',
         'last_name',
-        'email',
         'is_blocked',
-        'is_superuser'
+        'is_superuser',
     )
     list_filter = (
         'email',
         'username', 
         'is_blocked', 
-        'is_superuser'
+        'is_superuser',
     )
     fieldsets = (
         (None, {'fields': (
@@ -49,7 +49,7 @@ class UserAdmin(UserAdmin):
                 'password1',
                 'password2',
                 'is_blocked',
-                'is_superuser'
+                'is_superuser',
             )
         }),
     )

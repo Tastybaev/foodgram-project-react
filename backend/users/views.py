@@ -22,7 +22,7 @@ from .models import ShoppingCart, Subscribe, User
 from .serializers import SubscriptionSerializer
 
 FILE_NAME = 'shopping_cart.txt'
-
+ERRORS_KEY = 'errors'
 
 class TokenCreateWithCheckBlockStatusView(TokenCreateView):
     def _action(self, serializer):
@@ -85,7 +85,7 @@ class UserSubscribeViewSet(UserViewSet):
         )
 
     @action(
-        methods=('get', 'delete',),
+        methods=('get', 'post', 'delete',),
         detail=True,
         permission_classes=(IsAuthenticated,)
     )
@@ -103,12 +103,12 @@ class UserSubscribeViewSet(UserViewSet):
 
 
 class ShoppingCartViewSet(GenericViewSet):
-    name = 'ingredient_name'
-    measurement_unit = 'ingredient_measurement_unit'
+    name = 'ingredients__ingredient__name'
+    measurement_unit = 'ingredients__ingredient__measurement_unit'
     permission_classes = (IsAuthenticated,)
     serializer_class = RecipeShortReadSerializer
     queryset = ShoppingCart.objects.all()
-    http_method_names = ('get', 'delete',)
+    http_method_names = ('get', 'post', 'delete',)
 
     def generate_shopping_cart_data(self, request):
         recipes = (
@@ -170,12 +170,13 @@ class ShoppingCartViewSet(GenericViewSet):
             status=HTTP_204_NO_CONTENT,
         )
 
-    @action(methods=('get', 'delete',), detail=True)
+    @action(methods=('get', 'post', 'delete',), detail=True)
     def shopping_cart(self, request, pk=None):
         recipe = get_object_or_404(Recipe, pk=pk)
         shopping_cart = (
             ShoppingCart.objects.get_or_create(user=request.user)[0]
         )
         if request.method == 'GET':
-            return self.add_to_shopping_cart(request, recipe, shopping_cart)
-        return self.remove_from_shopping_cart(request, recipe, shopping_cart)
+            return self.remove_from_shopping_cart(request, recipe, shopping_cart)
+        return self.add_to_shopping_cart(request, recipe, shopping_cart)
+        

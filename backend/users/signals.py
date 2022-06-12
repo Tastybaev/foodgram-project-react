@@ -6,7 +6,7 @@ from .models import ShoppingCart, User
 
 
 @receiver(post_save, sender=User)
-def create_shopping_list(sender, instance, created, **kwargs):
+def create_shopping_cart(sender, instance, created, **kwargs):
     if created:
         ShoppingCart.objects.create(user=instance)
 
