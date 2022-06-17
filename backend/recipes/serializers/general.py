@@ -20,14 +20,14 @@ from recipes.models import (
 from users.models import ShoppingCart
 from users.serializers import UserSerializer
 
-TAGS_UNIQUE_ERROR = 'Теги не могут повторяться!'
-TAGS_EMPTY_ERROR = 'Рецепт не может быть без тегов!'
+TAGS_UNIQUE_ERROR = 'Теги не повторяються!'
+TAGS_EMPTY_ERROR = 'Рецепт без тегов запрещен!'
 INGREDIENTS_UNIQUE_ERROR = 'Ингредиенты не могут повторяться!'
-INGREDIENTS_EMPTY_ERROR = 'Без ингредиентов рецепта не бывает!'
+INGREDIENTS_EMPTY_ERROR = 'Рецепта не бывает без ингредиентов!'
 INGREDIENT_MIN_AMOUNT_ERROR = (
     'Количество ингредиента не может быть меньше {min_value}!'
 )
-INGREDIENT_DOES_NOT_EXIST = 'Такого ингредиента не существует!'
+INGREDIENT_DOES_NOT_EXIST = 'Такого ингредиента нет в базе данных!'
 
 INGREDIENT_MIN_AMOUNT = 1
 COOKING_TIME_MIN_VALUE = 1

@@ -26,8 +26,11 @@ services:
     env_file:
       - ./.env
   frontend:
-    image: tastybaev/foodgram-project-frontend:v.1
-    build: ../frontend
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    # image: tastybaev/foodgram-project-frontend:v.1
+    # build: ../frontend
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:

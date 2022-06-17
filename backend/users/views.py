@@ -15,6 +15,7 @@ from rest_framework.status import (
 )
 from rest_framework.viewsets import GenericViewSet
 
+from foodgram.join import food_staff_add, food_staff_remove
 from foodgram.pagination import LimitPageNumberPagination
 from recipes.models import Recipe
 from recipes.serializers.special import RecipeShortReadSerializer
@@ -85,7 +86,7 @@ class UserSubscribeViewSet(UserViewSet):
         )
 
     @action(
-        methods=('get', 'post', 'delete',),
+        methods=('get', 'delete',),
         detail=True,
         permission_classes=(IsAuthenticated,)
     )
@@ -108,7 +109,7 @@ class ShoppingCartViewSet(GenericViewSet):
     permission_classes = (IsAuthenticated,)
     serializer_class = RecipeShortReadSerializer
     queryset = ShoppingCart.objects.all()
-    http_method_names = ('get', 'post', 'delete',)
+    http_method_names = ('get', 'delete',)
 
     def generate_shopping_cart_data(self, request):
         recipes = (
@@ -148,10 +149,7 @@ class ShoppingCartViewSet(GenericViewSet):
 
     def add_to_shopping_cart(self, request, recipe, shopping_cart):
         if shopping_cart.recipes.filter(pk__in=(recipe.pk,)).exists():
-            return Response(
-                {ERRORS_KEY: 'Нельзя подписаться дважды!'},
-                status=HTTP_400_BAD_REQUEST,
-            )
+            return food_staff_add(request, recipe, shopping_cart, True)
         shopping_cart.recipes.add(recipe)
         serializer = self.get_serializer(recipe)
         return Response(
@@ -161,16 +159,13 @@ class ShoppingCartViewSet(GenericViewSet):
 
     def remove_from_shopping_cart(self, request, recipe, shopping_cart):
         if not shopping_cart.recipes.filter(pk__in=(recipe.pk,)).exists():
-            return Response(
-                {ERRORS_KEY: 'В списке покупок такого рецепта нет!'},
-                status=HTTP_400_BAD_REQUEST,
-            )
+            return food_staff_remove(request, recipe, shopping_cart, False)
         shopping_cart.recipes.remove(recipe)
         return Response(
             status=HTTP_204_NO_CONTENT,
         )
 
-    @action(methods=('get', 'post', 'delete',), detail=True)
+    @action(methods=('get', 'delete',), detail=True)
     def shopping_cart(self, request, pk=None):
         recipe = get_object_or_404(Recipe, pk=pk)
         shopping_cart = (

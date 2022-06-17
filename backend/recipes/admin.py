@@ -1,6 +1,12 @@
 from django.contrib.admin import ModelAdmin, display, register
 
-from .models import CountOfIngredient, Favorite, Ingredient, Recipe, Tag
+from .models import (
+    CountOfIngredient, 
+    Favorite, 
+    Ingredient, 
+    Recipe, 
+    Tag
+)
 
 
 @register(Tag)

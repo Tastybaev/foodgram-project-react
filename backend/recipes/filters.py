@@ -64,16 +64,3 @@ class RecipeFilter(FilterSet):
         return queryset.filter(
             pk__in=recipes
         )
-
-
-class SearhIngredient(FilterSet):
-    name = CharFilter(method='search_by_name')
-
-    class Meta:
-        model = Ingredient
-        fields = ('name',)
-
-    def search_by_name(self, name):
-        if not name:
-            return "Имя не найдено!"
-        return name.objects.all()

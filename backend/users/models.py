@@ -24,7 +24,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_blocked = BooleanField('Заблокирован', default=False)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    REQUIRED_FIELDS = ['username', 'password', 'first_name', 'last_name',]
 
     objects = UserManager()
 

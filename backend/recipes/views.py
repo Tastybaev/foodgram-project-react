@@ -4,14 +4,10 @@ from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, SAFE_METHODS
 from rest_framework.response import Response
-from rest_framework.status import (
-    HTTP_200_OK,
-    HTTP_201_CREATED,
-    HTTP_204_NO_CONTENT,
-    HTTP_400_BAD_REQUEST
-)
+from rest_framework.status import HTTP_201_CREATED
 from rest_framework.viewsets import ModelViewSet
 
+from foodgram.join import food_staff_add, food_staff_remove
 from foodgram.mixins import ListRetriveViewSet
 from foodgram.pagination import LimitPageNumberPagination
 from foodgram.permissions import IsAuthorOrAdminOrReadOnly
@@ -58,43 +54,11 @@ class RecipeViewSet(ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        serializer = RecipeReadSerializer(
-            instance=serializer.instance,
-            context={'request': self.request}
-        )
-        headers = self.get_success_headers(serializer.data)
-        return Response(
-            serializer.data, status=HTTP_201_CREATED, headers=headers
-        )
-
-    def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-        serializer = self.get_serializer(
-            instance, data=request.data, partial=partial
-        )
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        serializer = RecipeReadSerializer(
-            instance=serializer.instance,
-            context={'request': self.request},
-        )
-        return Response(
-            serializer.data, status=HTTP_200_OK
-        )
-
     def add_to_favorite(self, request, recipe):
         try:
             Favorite.objects.create(user=request.user, recipe=recipe)
         except IntegrityError:
-            return Response(
-                {ERRORS_KEY: 'Вы уже подписаны!'},
-                status=HTTP_400_BAD_REQUEST,
-            )
+            return food_staff_add(request, recipe, True)
         serializer = RecipeShortReadSerializer(recipe)
         return Response(
             serializer.data,
@@ -104,12 +68,7 @@ class RecipeViewSet(ModelViewSet):
     def delete_from_favorite(self, request, recipe):
         favorite = Favorite.objects.filter(user=request.user, recipe=recipe)
         if not favorite.exists():
-            return Response(
-                {ERRORS_KEY: 'Подписки не существует!'},
-                status=HTTP_400_BAD_REQUEST,
-            )
-        favorite.delete()
-        return Response(status=HTTP_204_NO_CONTENT)
+            return food_staff_remove(request, recipe, False)
 
     @action(
         methods=('get', 'post', 'delete',),
