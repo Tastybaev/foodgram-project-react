@@ -20,6 +20,7 @@ from recipes.models import (
 from users.models import ShoppingCart
 from users.serializers import UserSerializer
 
+
 TAGS_UNIQUE_ERROR = 'Теги не повторяються!'
 TAGS_EMPTY_ERROR = 'Рецепт без тегов запрещен!'
 INGREDIENTS_UNIQUE_ERROR = 'Ингредиенты не могут повторяться!'

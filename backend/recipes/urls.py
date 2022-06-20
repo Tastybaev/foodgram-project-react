@@ -8,6 +8,7 @@ from .views import (
     TagViewSet
 )
 
+
 router = DefaultRouter()
 router.register(r'tags', TagViewSet, basename='tags')
 router.register(r'ingredients', IngredientViewSet, basename='ingredients')

@@ -72,7 +72,6 @@ class Subscribe(Model):
 class ShoppingCart(Model):
     user = OneToOneField(
         User,
-        unique=True,
         on_delete=CASCADE,
         related_name='shopping_cart',
         verbose_name='Пользователь'
@@ -86,6 +85,12 @@ class ShoppingCart(Model):
     class Meta:
         verbose_name = 'Список покупок'
         verbose_name_plural = 'Списки покупок'
+        constraints = (
+            UniqueConstraint(
+                fields=('user',),
+                name='unique_user',
+            ),
+        )
 
     def __str__(self):
         return f'{self.user}'

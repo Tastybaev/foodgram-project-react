@@ -16,6 +16,7 @@ from django.db.models import (
 
 from django.urls import reverse
 
+
 User = get_user_model()
 
 INGREDIENT_MIN_AMOUNT = 1

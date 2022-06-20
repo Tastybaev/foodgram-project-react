@@ -22,8 +22,10 @@ from recipes.serializers.special import RecipeShortReadSerializer
 from .models import ShoppingCart, Subscribe, User
 from .serializers import SubscriptionSerializer
 
+
 FILE_NAME = 'shopping_cart.txt'
 ERRORS_KEY = 'errors'
+
 
 class TokenCreateWithCheckBlockStatusView(TokenCreateView):
     def _action(self, serializer):
@@ -174,4 +176,3 @@ class ShoppingCartViewSet(GenericViewSet):
         if request.method == 'GET':
             return self.remove_from_shopping_cart(request, recipe, shopping_cart)
         return self.add_to_shopping_cart(request, recipe, shopping_cart)
-        
