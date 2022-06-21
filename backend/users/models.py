@@ -24,14 +24,14 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_blocked = BooleanField('Заблокирован', default=False)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'password', 'first_name', 'last_name',]
+    REQUIRED_FIELDS = ['username', 'password', 'first_name', 'last_name', ]
 
     objects = UserManager()
 
     class Meta:
         ordering = ('-pk',)
         verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователи'  
+        verbose_name_plural = 'Пользователи'
 
     def __str__(self):
         return self.username

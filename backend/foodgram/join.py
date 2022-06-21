@@ -1,8 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.status import HTTP_400_BAD_REQUEST
 
-from recipes.models import Recipe
-from users.models import ShoppingCart
+from users.views import ERRORS_KEY
 
 
 def food_staff_add(self, request, recipe, shopping_cart):
@@ -10,6 +9,7 @@ def food_staff_add(self, request, recipe, shopping_cart):
         {ERRORS_KEY: 'Нельзя подписаться дважды!'},
         status=HTTP_400_BAD_REQUEST,
     )
+
 
 def food_staff_remove(self, request, recipe, shopping_cart):
     return Response(

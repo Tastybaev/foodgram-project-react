@@ -41,18 +41,21 @@ class Tag(Model):
 
     def __str__(self):
         return f'{self.name}'
-    
+
     def get_absolute_url(self):
         return reverse('tag', args=[self.slug])
 
 
 class Ingredient(Model):
-    name = CharField('Название ингредиента',
-       max_length=255
-    )
-    measurement_unit = CharField('Единица измерения',
+    name = CharField(
+        'Название ингредиента',
         max_length=255
     )
+    measurement_unit = CharField(
+        'Единица измерения',
+        max_length=255
+    )
+
     class Meta:
         verbose_name = 'ingredient'
         verbose_name_plural = 'ingredients'
@@ -104,8 +107,9 @@ class Recipe(Model):
         related_name='recipes',
         verbose_name='Автор'
     )
-    name = CharField('Название',
-       max_length=150
+    name = CharField(
+        'Название',
+        max_length=150
     )
     image = ImageField('Картинка')
     text = TextField('Описание')

@@ -11,11 +11,11 @@ class UserSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = (
-            'id', 
-            'email', 
-            'username', 
-            'first_name', 
-            'last_name', 
+            'id',
+            'email',
+            'username',
+            'first_name',
+            'last_name',
             'password',
             'is_subscribed',
         )

@@ -1,7 +1,8 @@
-import json
-
 from django.core.management.base import BaseCommand
+
 from recipes.models import Ingredient
+
+import json
 
 
 class Command(BaseCommand):
@@ -11,6 +12,7 @@ class Command(BaseCommand):
             type=str,
             help="file path"
         )
+
     def handle(self, *args, **options):
         file_path = options["path"]
         with open(

@@ -21,7 +21,6 @@ from .serializers.general import (
 )
 from .serializers.special import RecipeShortReadSerializer
 
-
 ERRORS_KEY = 'errors'
 
 

@@ -22,7 +22,6 @@ from recipes.serializers.special import RecipeShortReadSerializer
 from .models import ShoppingCart, Subscribe, User
 from .serializers import SubscriptionSerializer
 
-
 FILE_NAME = 'shopping_cart.txt'
 ERRORS_KEY = 'errors'
 
@@ -55,7 +54,7 @@ class UserSubscribeViewSet(UserViewSet):
             return self.get_paginated_response(serializer.data)
         serializer = self.get_subscribtion_serializer(queryset, many=True)
         return Response(serializer.data, status=HTTP_200_OK)
-    
+
     def create_subscribe(self, request, author):
         if request.user == author:
             return Response(
@@ -73,7 +72,7 @@ class UserSubscribeViewSet(UserViewSet):
                 status=HTTP_400_BAD_REQUEST,
             )
         serializer = self.get_subscribtion_serializer(subscribe.author)
-        return Response(serializer.data, status=HTTP_201_CREATED) # возвращают контент автора.
+        return Response(serializer.data, status=HTTP_201_CREATED)
 
     def delete_subscribe(self, request, author):
         try:
@@ -174,5 +173,5 @@ class ShoppingCartViewSet(GenericViewSet):
             ShoppingCart.objects.get_or_create(user=request.user)[0]
         )
         if request.method == 'GET':
-            return self.remove_from_shopping_cart(request, recipe, shopping_cart)
-        return self.add_to_shopping_cart(request, recipe, shopping_cart)
+            return self.add_to_shopping_cart(request, recipe, shopping_cart)
+        return self.remove_from_shopping_cart(request, recipe, shopping_cart)

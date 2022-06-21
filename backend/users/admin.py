@@ -22,15 +22,15 @@ class UserAdmin(UserAdmin):
     )
     list_filter = (
         'email',
-        'username', 
-        'is_blocked', 
+        'username',
+        'is_blocked',
         'is_superuser',
     )
     fieldsets = (
         (None, {'fields': (
             'email',
-            'username', 
-            'first_name', 
+            'username',
+            'first_name',
             'last_name',
             'password'
         )}),
@@ -54,9 +54,9 @@ class UserAdmin(UserAdmin):
         }),
     )
     search_fields = (
-        'email', 
-        'username', 
-        'first_name', 
+        'email',
+        'username',
+        'first_name',
         'last_name',
     )
     ordering = ('id', 'email', 'username',)

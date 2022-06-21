@@ -8,7 +8,6 @@ from .views import (
     UserSubscribeViewSet
 )
 
-
 router = DefaultRouter()
 
 router.register(r'users', UserSubscribeViewSet, basename='users')
@@ -23,8 +22,8 @@ authorization = [
         name="login",
     ),
     path(
-        'token/logout/', 
-        TokenDestroyView.as_view(), 
+        'token/logout/',
+        TokenDestroyView.as_view(),
         name="logout"
     ),
 ]
