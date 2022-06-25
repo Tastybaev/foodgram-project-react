@@ -1,8 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.status import HTTP_400_BAD_REQUEST
 
-from users.views import ERRORS_KEY
-
+ERRORS_KEY = 'errors'
 
 def food_staff_add(self, request, recipe, shopping_cart):
     return Response(

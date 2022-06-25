@@ -7,7 +7,11 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED
 from rest_framework.viewsets import ModelViewSet
 
-from foodgram.join import food_staff_add, food_staff_remove
+from foodgram.join import (
+    food_staff_add,
+    food_staff_remove,
+    ERRORS_KEY
+)
 from foodgram.mixins import ListRetriveViewSet
 from foodgram.pagination import LimitPageNumberPagination
 from foodgram.permissions import IsAuthorOrAdminOrReadOnly
@@ -20,8 +24,6 @@ from .serializers.general import (
     TagSerializer
 )
 from .serializers.special import RecipeShortReadSerializer
-
-ERRORS_KEY = 'errors'
 
 
 class TagViewSet(ListRetriveViewSet):
@@ -78,5 +80,5 @@ class RecipeViewSet(ModelViewSet):
     def favorite(self, request, pk=None):
         recipe = get_object_or_404(Recipe, pk=pk)
         if request.method == 'GET':
-            return self.delete_from_favorite(request, recipe)
-        return self.add_to_favorite(request, recipe)
+            return self.add_to_favorite(request, recipe)
+        return self.delete_from_favorite(request, recipe)
